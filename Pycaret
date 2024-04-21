@@ -1,0 +1,30 @@
+# Import necessary libraries
+import streamlit as st
+from pycaret.classification import *
+
+# Title of the app
+st.title('PyCaret & Streamlit App')
+
+# Add a sidebar
+st.sidebar.title("Sidebar")
+
+# Add a file uploader to the sidebar
+uploaded_file = st.sidebar.file_uploader(label="Upload your input CSV file", type=['csv'])
+
+# Check if a file is uploaded
+if uploaded_file is not None:
+
+    # Read the uploaded file
+    data = pd.read_csv(uploaded_file)
+
+    # Show the uploaded file
+    st.write(data)
+
+    # Setup PyCaret
+    exp_clf = setup(data = data, target = 'target', session_id=123)  # replace 'target' with your target column
+
+    # Compare models
+    best_model = compare_models()
+
+    # Display the best model
+    st.write(best_model)
