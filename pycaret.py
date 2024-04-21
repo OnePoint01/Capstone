@@ -1,4 +1,4 @@
-!pip install streamlit pycaret pandas matplotlib seaborn
+pip install streamlit pycaret pandas matplotlib seaborn
 # Import necessary libraries
 import streamlit as st
 import pandas as pd
