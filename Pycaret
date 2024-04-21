@@ -1,6 +1,12 @@
 # Import necessary libraries
 import streamlit as st
-from pycaret.classification import *
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Import necessary functions from PyCaret
+from pycaret.classification import setup as setup_clf, automl as automl_clf
+from pycaret.regression import setup as setup_reg, automl as automl_reg
 
 # Title of the app
 st.title('PyCaret & Streamlit App')
@@ -20,12 +26,41 @@ if uploaded_file is not None:
     # Show the uploaded file
     st.write(data)
 
-    # Setup PyCaret
-    exp_clf = setup(data = data, target = 'target', session_id=123)  # replace 'target' with your target column
+    # Display the first few rows of the DataFrame
+    st.write('Head of Dataset:', data.head())
 
-    # Compare models
-    best_model = compare_models()
+    # Display the shape of the DataFrame
+    st.write('Data Shape:', data.shape)
+
+    # Display the column names
+    st.write('Column Names:', data.columns.tolist())
+
+    # Display column data types
+    st.write('Column Data Types:', data.dtypes)
+
+    # Display summary statistics
+    st.write('Summary Statistics:', data.describe().transpose())
+
+    # Display correlation matrix using a heatmap
+    st.write('Correlation Matrix:')
+    fig, ax = plt.subplots(figsize=(10,10))
+    sns.heatmap(data.corr(), annot=True, ax=ax)
+    st.pyplot(fig)
+
+    # Ask user for the target column
+    target = st.sidebar.selectbox('Select the target column', data.columns.tolist())
+
+    # Check if target column values are numeric (Regression) or not (Classification)
+    if pd.api.types.is_numeric_dtype(data[target]):
+        # Setup PyCaret for Regression
+        exp_reg = setup_reg(data = data, target = target, session_id=123)
+        # Use AutoML to select the best model
+        best_model = automl_reg(optimize = 'R2')  # optimize for R-squared for regression
+    else:
+        # Setup PyCaret for Classification
+        exp_clf = setup_clf(data = data, target = target, session_id=123)
+        # Use AutoML to select the best model
+        best_model = automl_clf(optimize = 'Accuracy')  # optimize for accuracy for classification
 
     # Display the best model
     st.write(best_model)
-!streamlit run /usr/local/lib/python3.10/dist-packages/colab_kernel_launcher.py
