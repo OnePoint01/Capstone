@@ -1,4 +1,16 @@
-pip install streamlit pycaret pandas matplotlib seaborn
+import subprocess
+import sys
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Example usage
+install('streamlit')
+install('pycaret')
+install('pandas')
+install('matplotlib')
+install('seaborn')
+
 # Import necessary libraries
 import streamlit as st
 import pandas as pd
